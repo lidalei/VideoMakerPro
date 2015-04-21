@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>518</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Rounded</enum>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QGraphicsView" name="imageView"/>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="inputImageViewAdd">
+            <property name="text">
+             <string>Add more image</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QGraphicsView" name="outputImageView"/>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <spacer name="horizontalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="outputImageViewPlay">
+            <property name="text">
+             <string>Play</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="outputImageViewPause">
+            <property name="text">
+             <string>Pause</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="outputImageViewStop">
+            <property name="text">
+             <string>Stop</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1000</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuEffects">
+    <property name="title">
+     <string>Concat</string>
+    </property>
+    <addaction name="hConcat"/>
+    <addaction name="vConcat"/>
+    <addaction name="triConcat"/>
+   </widget>
+   <widget class="QMenu" name="menuAnimation">
+    <property name="title">
+     <string>Animation</string>
+    </property>
+    <widget class="QMenu" name="hAnimation">
+     <property name="title">
+      <string>H Animation</string>
+     </property>
+     <addaction name="hAnimation_Left_In"/>
+     <addaction name="hAnimation_Right_In"/>
+     <addaction name="hAnimation_Left_Out"/>
+     <addaction name="hAnimation_Right_Out"/>
+    </widget>
+    <widget class="QMenu" name="vAnimation">
+     <property name="title">
+      <string>V Animation</string>
+     </property>
+     <addaction name="vAnimation_Top_In"/>
+     <addaction name="vAnimation_Bottom_In"/>
+     <addaction name="vAnimation_Top_Out"/>
+     <addaction name="vAnimation_Bottom_Out"/>
+    </widget>
+    <addaction name="hAnimation"/>
+    <addaction name="vAnimation"/>
+   </widget>
+   <widget class="QMenu" name="menuTtansition">
+    <property name="title">
+     <string>Transition</string>
+    </property>
+    <addaction name="transition"/>
+    <addaction name="rectTransfer"/>
+   </widget>
+   <widget class="QMenu" name="menuFeatures">
+    <property name="title">
+     <string>Features</string>
+    </property>
+    <addaction name="features_SLIC"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEffects"/>
+   <addaction name="menuAnimation"/>
+   <addaction name="menuTtansition"/>
+   <addaction name="menuFeatures"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="hConcat">
+   <property name="text">
+    <string>hConcat</string>
+   </property>
+  </action>
+  <action name="vConcat">
+   <property name="text">
+    <string>vConcat</string>
+   </property>
+  </action>
+  <action name="triConcat">
+   <property name="text">
+    <string>triConcat</string>
+   </property>
+  </action>
+  <action name="hAnimation_Left_In">
+   <property name="text">
+    <string>Left In</string>
+   </property>
+  </action>
+  <action name="hAnimation_Right_In">
+   <property name="text">
+    <string>Right In</string>
+   </property>
+  </action>
+  <action name="hAnimation_Left_Out">
+   <property name="text">
+    <string>Left Out</string>
+   </property>
+  </action>
+  <action name="hAnimation_Right_Out">
+   <property name="text">
+    <string>Right Out</string>
+   </property>
+  </action>
+  <action name="vAnimation_Top_In">
+   <property name="text">
+    <string>Up In</string>
+   </property>
+  </action>
+  <action name="vAnimation_Bottom_In">
+   <property name="text">
+    <string>Bottom In</string>
+   </property>
+  </action>
+  <action name="vAnimation_Top_Out">
+   <property name="text">
+    <string>Up Out</string>
+   </property>
+  </action>
+  <action name="vAnimation_Bottom_Out">
+   <property name="text">
+    <string>Bottom Out</string>
+   </property>
+  </action>
+  <action name="transition">
+   <property name="text">
+    <string>Transparent</string>
+   </property>
+  </action>
+  <action name="rectTransfer">
+   <property name="text">
+    <string>Rect Transition</string>
+   </property>
+  </action>
+  <action name="features_SLIC">
+   <property name="text">
+    <string>SLIC</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
