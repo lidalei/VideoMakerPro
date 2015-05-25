@@ -162,6 +162,7 @@
     </item>
    </layout>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
@@ -175,6 +176,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="file_Exit"/>
    </widget>
    <widget class="QMenu" name="menuEffects">
     <property name="title">
@@ -209,10 +211,25 @@
     <addaction name="hAnimation"/>
     <addaction name="vAnimation"/>
    </widget>
-   <widget class="QMenu" name="menuTtansition">
+   <widget class="QMenu" name="menuTransition">
     <property name="title">
      <string>Transition</string>
     </property>
+    <widget class="QMenu" name="rectTransfer">
+     <property name="title">
+      <string>Rect Transfer</string>
+     </property>
+     <addaction name="rectTransfer_Top_Left_To"/>
+     <addaction name="rectTransfer_Top_Right_To"/>
+     <addaction name="rectTransfer_Bottom_Left_To"/>
+     <addaction name="rectTransfer_Bottom_Right_To"/>
+     <addaction name="rectTransfer_Border_To_Center"/>
+     <addaction name="rectTransfer_Center_To_Border"/>
+     <addaction name="rectTransfer_Left_To_Right"/>
+     <addaction name="rectTransfer_Right_To_Left"/>
+     <addaction name="rectTransfer_Top_To_Bottom"/>
+     <addaction name="rectTransfer_Bottom_To_Top"/>
+    </widget>
     <addaction name="transition"/>
     <addaction name="rectTransfer"/>
    </widget>
@@ -221,14 +238,22 @@
      <string>Features</string>
     </property>
     <addaction name="features_SLIC"/>
+    <addaction name="features_SIFT"/>
+    <addaction name="features_ASLIC"/>
+   </widget>
+   <widget class="QMenu" name="menuMisc">
+    <property name="title">
+     <string>Misc</string>
+    </property>
+    <addaction name="misc_Super_Resolution"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEffects"/>
    <addaction name="menuAnimation"/>
-   <addaction name="menuTtansition"/>
+   <addaction name="menuTransition"/>
    <addaction name="menuFeatures"/>
+   <addaction name="menuMisc"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="hConcat">
    <property name="text">
     <string>hConcat</string>
@@ -289,14 +314,79 @@
     <string>Transparent</string>
    </property>
   </action>
-  <action name="rectTransfer">
-   <property name="text">
-    <string>Rect Transition</string>
-   </property>
-  </action>
   <action name="features_SLIC">
    <property name="text">
     <string>SLIC</string>
+   </property>
+  </action>
+  <action name="features_SIFT">
+   <property name="text">
+    <string>SIFT</string>
+   </property>
+  </action>
+  <action name="features_ASLIC">
+   <property name="text">
+    <string>ASLIC</string>
+   </property>
+  </action>
+  <action name="misc_Super_Resolution">
+   <property name="text">
+    <string>Super resolution</string>
+   </property>
+  </action>
+  <action name="file_Exit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="rectTransfer_Top_Left_To">
+   <property name="text">
+    <string>Top_Left_To</string>
+   </property>
+  </action>
+  <action name="rectTransfer_Top_Right_To">
+   <property name="text">
+    <string>Top_Right_To</string>
+   </property>
+  </action>
+  <action name="rectTransfer_Bottom_Left_To">
+   <property name="text">
+    <string>Bottom_Left_To</string>
+   </property>
+  </action>
+  <action name="rectTransfer_Bottom_Right_To">
+   <property name="text">
+    <string>Bottom_Right_To</string>
+   </property>
+  </action>
+  <action name="rectTransfer_Border_To_Center">
+   <property name="text">
+    <string>Center_To_Border</string>
+   </property>
+  </action>
+  <action name="rectTransfer_Center_To_Border">
+   <property name="text">
+    <string>Border_To_Center</string>
+   </property>
+  </action>
+  <action name="rectTransfer_Left_To_Right">
+   <property name="text">
+    <string>Left_To_Right</string>
+   </property>
+  </action>
+  <action name="rectTransfer_Right_To_Left">
+   <property name="text">
+    <string>Right_To_Left</string>
+   </property>
+  </action>
+  <action name="rectTransfer_Top_To_Bottom">
+   <property name="text">
+    <string>Top_To_Bottom</string>
+   </property>
+  </action>
+  <action name="rectTransfer_Bottom_To_Top">
+   <property name="text">
+    <string>Bottom_To_Top</string>
    </property>
   </action>
  </widget>

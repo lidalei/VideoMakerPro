@@ -60,7 +60,7 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     ImageShowEffects.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS += mainwindow.h \
     ImageShowEffects.h \
 
 FORMS    += mainwindow.ui \

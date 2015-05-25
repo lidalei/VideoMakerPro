@@ -592,7 +592,7 @@ bool ImageShowEffects::verticalAnimationLoad(const cv::Mat & image, std::vector<
         }
         int imageChannels = image.channels();
         int footLength = image.rows / number;
-        int depth = image.depth();
+//        int depth = image.depth();
         int animationLength(0);
         if (imageChannels == 1) { // gray image
                 for (int i = 0; i < number; ++i) {
@@ -1908,6 +1908,206 @@ bool ImageShowEffects::SLIC(const cv::Mat & srcImage, cv::Mat &image_pixels_labe
                           image_pixels_distance.at<double>(row, col) = pixel_distance;
                           image_pixels_label.at<int>(row, col) = j;
                       }
+                  }
+              }
+          }
+        }
+        /// compute new cluster centers
+        std::vector<int> k_cluster_count(k_cluster_center.size(), 0);
+        for(int j = 0; j < k_cluster_center.size(); ++j) {
+            k_cluster_center.at(j) = std::vector<int>(5, 0);
+        }
+        for(int row = 0; row < imageHeight; ++row) {
+            for(int col = 0; col < imageWidth; ++col) {
+                const cv::Vec3b &pixel = srcImage.at<cv::Vec3b>(row, col);
+                int label = image_pixels_label.at<int>(row, col);
+                std::vector<int> & label_th_cluster_center = k_cluster_center.at(label);
+                label_th_cluster_center.at(0) += pixel[0];
+                label_th_cluster_center.at(1) += pixel[1];
+                label_th_cluster_center.at(2) += pixel[2];
+                label_th_cluster_center.at(3) += col;
+                label_th_cluster_center.at(4) += row;
+                ++k_cluster_count.at(label);
+            }
+        }
+        for(int j = 0; j < k_cluster_center.size(); ++j) {
+            std::vector<int> &jth_cluster_center = k_cluster_center.at(j);
+            int jth_cluster_count = k_cluster_count.at(j);
+            for(int k = 0; k < jth_cluster_center.size(); ++k) {
+                jth_cluster_center.at(k) /= jth_cluster_count;
+            }
+        }
+    }
+    /// post-processing for step 2
+    // using a connected components algorithm
+
+    return true;
+}
+
+/**
+* ASLIC super pixel
+* @para Mat srcImage
+* @para Mat image_pixels_label, type is CV_32SC1
+* @para int k
+* @para int iteration count
+*/
+bool ImageShowEffects::ASLIC(const cv::Mat & srcImage, cv::Mat &image_pixels_label, const int & k, const int & iteration_count) {
+    std::vector< std::vector< int > > k_cluster_center(k, std::vector<int>(5 ,0));
+    // step 1
+    int imageWidth = srcImage.cols;
+    int imageHeight = srcImage.rows;
+    int sqrt_k = std::sqrt(k);
+    int col_step = imageWidth / sqrt_k;
+    int row_step = imageHeight / sqrt_k;
+    int row_coordinate = 0;
+    for(int i = 0; i < sqrt_k; ++i) {
+        int col_coordinate = 0;
+        for(int j = 0; j < sqrt_k; ++j) {
+            const cv::Vec3b &pixel = srcImage.at<cv::Vec3b>(row_coordinate, col_coordinate);
+            k_cluster_center.at(i*sqrt_k + j).at(0) = pixel[0];
+            k_cluster_center.at(i*sqrt_k + j).at(1) = pixel[1];
+            k_cluster_center.at(i*sqrt_k + j).at(2) = pixel[2];
+            k_cluster_center.at(i*sqrt_k + j).at(3) = col_coordinate;// X
+            k_cluster_center.at(i*sqrt_k + j).at(4) = row_coordinate;// Y
+            col_coordinate += col_step;
+        }
+        row_coordinate += row_step;
+    }
+    /// Deal with remaining clusters successfully
+    int remain_cluster_count = 0;
+    if((remain_cluster_count = k - sqrt_k * sqrt_k) != 0) {
+        // add remaining cluster center
+        if(imageWidth <= imageHeight) {
+            // add row
+            int remain_row_coordinate = ((sqrt_k - 1) * row_step + imageHeight) >> 1;
+            int remain_col_step = imageWidth / remain_cluster_count;
+            int remain_cluster_index = k - remain_cluster_count;
+            int remain_col_coordinate = 0;
+            for(int i = 0; i < remain_cluster_count; ++i) {
+                const cv::Vec3b &pixel = srcImage.at<cv::Vec3b>(remain_row_coordinate, remain_col_coordinate);
+                std::vector<int> & ith_remain_cluster_center = k_cluster_center.at(remain_cluster_index);
+                ith_remain_cluster_center.at(0) = pixel[0];
+                ith_remain_cluster_center.at(1) = pixel[1];
+                ith_remain_cluster_center.at(2) = pixel[2];
+                ith_remain_cluster_center.at(3) = remain_col_coordinate;// X
+                ith_remain_cluster_center.at(4) = remain_row_coordinate;// Y
+                ++remain_cluster_index;
+                remain_col_coordinate += remain_col_step;
+            }
+        }
+        else {
+            // add column
+            int remain_col_coordinate = ((sqrt_k - 1) * col_step + imageWidth) >> 1;
+            int remain_row_step = imageHeight / remain_cluster_count;
+            int remain_cluster_index = k - remain_cluster_count;
+            int remain_row_coordinate = 0;
+            for(int i = 0; i < remain_cluster_count; ++i) {
+                const cv::Vec3b &pixel = srcImage.at<cv::Vec3b>(remain_row_coordinate, remain_col_coordinate);
+                std::vector<int> & ith_remain_cluster_center = k_cluster_center.at(remain_cluster_index);
+                ith_remain_cluster_center.at(0) = pixel[0];
+                ith_remain_cluster_center.at(1) = pixel[1];
+                ith_remain_cluster_center.at(2) = pixel[2];
+                ith_remain_cluster_center.at(3) = remain_col_coordinate;// X
+                ith_remain_cluster_center.at(4) = remain_row_coordinate;// Y
+                ++remain_cluster_index;
+                remain_row_coordinate += remain_row_step;
+            }
+        }
+    }
+    // post-processing for step 1
+    cv::Mat image_gradient;
+    gradient(srcImage, image_gradient);
+    for(int i = 0; i < k_cluster_center.size(); ++i) {
+        std::vector<int> & ith_cluster_center = k_cluster_center.at(i);
+        int ith_cluster_center_row = ith_cluster_center.at(4);
+        int ith_cluster_center_row_start = std::max(0, ith_cluster_center_row - 1);
+        int ith_cluster_center_row_end = std::min(ith_cluster_center_row_start + 2, imageHeight - 1);
+        int ith_cluster_center_col = ith_cluster_center.at(3);
+        int ith_cluster_center_col_start = std::max(0, ith_cluster_center_col-1);
+        int ith_cluster_center_col_end = std::min(ith_cluster_center_col_start + 2, imageWidth - 1);
+        int min_gradient = image_gradient.at<uchar>(ith_cluster_center_row, ith_cluster_center_col);
+        for(int row = ith_cluster_center_row_start; row <= ith_cluster_center_row_end; ++row) {
+            for(int col = ith_cluster_center_col_start; col <= ith_cluster_center_col_end; ++col) {
+                if(image_gradient.at<uchar>(row, col) < min_gradient) {
+                    ith_cluster_center.at(3) = col;
+                    ith_cluster_center.at(4) = row;
+                    min_gradient = image_gradient.at<uchar>(row, col);
+                }
+            }
+        }
+    }
+    for(int i = 0; i < k_cluster_center.size(); ++i) {
+        std::vector<int> & ith_cluster_center = k_cluster_center.at(i);
+        const cv::Vec3b &pixel = srcImage.at<cv::Vec3b>(ith_cluster_center.at(4), ith_cluster_center.at(3));
+        ith_cluster_center.at(0) = pixel[0];
+        ith_cluster_center.at(1) = pixel[1];
+        ith_cluster_center.at(2) = pixel[2];
+    }
+
+    /// step 2, reassign
+    // initialize pixels label
+    cv::Mat image_pixels_distance(imageHeight, imageWidth, CV_64FC1, cv::Scalar(1.5e+200));
+    /// assignment
+    std::vector<double> k_mc_vector(k, 100.0), k_ms_vector(k, (double)imageWidth * imageHeight / k);
+    std::vector<double> k_weight_calculation_factor_vector(k, 0.0);
+    for(int i = 0; i < iteration_count; ++i) {
+        // re-calculate weight_calculation_factor
+        for(int j = 0; j < k; ++j) {
+            k_weight_calculation_factor_vector.at(j) = k_mc_vector.at(j) / k_ms_vector.at(j);
+            k_mc_vector.at(j) = k_ms_vector.at(j) = 0.0;
+        }
+        for(int j = 0; j < k_cluster_center.size(); ++j) {
+            std::vector<int> &jth_cluster_center = k_cluster_center.at(j);
+            int jth_cluster_center_row = jth_cluster_center.at(4);
+            int jth_cluster_center_row_start = std::max(0, jth_cluster_center_row - sqrt_k);
+            int jth_cluster_center_row_end = std::min(jth_cluster_center_row_start + (sqrt_k << 1) - 1, imageHeight - 1);
+            int jth_cluster_center_col = jth_cluster_center.at(3);
+            int jth_cluster_center_col_start = std::max(0, jth_cluster_center_col - sqrt_k);
+            int jth_cluster_center_col_end = std::min(jth_cluster_center_col_start + (sqrt_k << 1) - 1, imageWidth - 1);
+            for(int row = jth_cluster_center_row_start; row <= jth_cluster_center_row_end; ++row) {
+                for(int col = jth_cluster_center_col_start; col <= jth_cluster_center_col_end; ++col) {
+                    const cv::Vec3b &pixel = srcImage.at<cv::Vec3b>(row, col);
+                    double color_distance = std::pow((pixel[0] - jth_cluster_center.at(0)), 2) + std::pow((pixel[1] - jth_cluster_center.at(1)), 2) + std::pow((pixel[2] - jth_cluster_center.at(2)), 2);
+                    if(k_mc_vector.at(j) < color_distance) {
+                        k_mc_vector.at(j) = color_distance;
+                    }
+                    double spatial_distance = std::pow(jth_cluster_center.at(3) - col, 2) + std::pow(jth_cluster_center.at(4)-row, 2);
+                    if(k_ms_vector.at(j) < spatial_distance) {
+                        k_ms_vector.at(j) = spatial_distance;
+                    }
+                    double pixel_distance = std::sqrt(color_distance + spatial_distance * k_weight_calculation_factor_vector.at(j));
+                    if(pixel_distance < image_pixels_distance.at<double>(row, col)) {
+                        image_pixels_distance.at<double>(row, col) = pixel_distance;
+                        image_pixels_label.at<int>(row, col) = j;
+                    }
+                }
+            }
+        }
+        // deal with unhandled area
+        for(int row = 0; row < imageHeight; ++row) {
+          for(int col = 0; col < imageWidth; ++col) {
+              if(image_pixels_label.at<int>(row, col) == -1) {
+                  for(int j = 0; j < k_cluster_center.size(); ++j) {
+                      std::vector<int> &jth_cluster_center = k_cluster_center.at(j);
+                      const cv::Vec3b &pixel = srcImage.at<cv::Vec3b>(row, col);
+                      double color_distance = std::pow((pixel[0] - jth_cluster_center.at(0)), 2) + std::pow((pixel[1] - jth_cluster_center.at(1)), 2) + std::pow((pixel[2] - jth_cluster_center.at(2)), 2);
+                      double spatial_distance = std::pow(jth_cluster_center.at(3) - col, 2) + std::pow(jth_cluster_center.at(4)-row, 2);
+                      double pixel_distance = std::sqrt(color_distance + spatial_distance * k_weight_calculation_factor_vector.at(j));
+                      if(pixel_distance < image_pixels_distance.at<double>(row, col)) {
+                          image_pixels_distance.at<double>(row, col) = pixel_distance;
+                          image_pixels_label.at<int>(row, col) = j;
+                      }
+                  }
+                  int index = image_pixels_label.at<int>(row, col);
+                  std::vector<int> &index_th_cluster_center = k_cluster_center.at(index);
+                  const cv::Vec3b &pixel = srcImage.at<cv::Vec3b>(row, col);
+                  double color_distance = std::pow((pixel[0] - index_th_cluster_center.at(0)), 2) + std::pow((pixel[1] - index_th_cluster_center.at(1)), 2) + std::pow((pixel[2] - index_th_cluster_center.at(2)), 2);
+                  if(k_mc_vector.at(index) < color_distance) {
+                      k_mc_vector.at(index) = color_distance;
+                  }
+                  double spatial_distance = std::pow(index_th_cluster_center.at(3) - col, 2) + std::pow(index_th_cluster_center.at(4)-row, 2);
+                  if(k_ms_vector.at(index) < spatial_distance) {
+                      k_ms_vector.at(index) = spatial_distance;
                   }
               }
           }

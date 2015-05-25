@@ -59,8 +59,11 @@ private slots:
     void hAnimationListener(QAction*action);
     void vAnimationListener(QAction*action);
     void transitionListener();
-    void rectTransferListener();
+    void rectTransferListener(QAction *action);
     void features_SLICListener();
+    void features_SIFTListener();
+    void features_ASLICListener();
+    void misc_Super_ResolutionListener();
     void showNextFrame();
 };
 

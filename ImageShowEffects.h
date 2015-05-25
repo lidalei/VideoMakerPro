@@ -7,6 +7,9 @@
 #include <opencv2/contrib/contrib.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/gpu/gpu.hpp>
+#include <opencv2/superres/optical_flow.hpp>
+#include <opencv2/superres/superres.hpp>
 #include <cmath>
 
 const int ANIMATION_LEFT_IN(1);
@@ -113,7 +116,7 @@ public:
         * @para diameter, width & height of the square
         * TODO!!!!!!!!!!
         */
-        bool ImageShowEffects::localZoomIn(const cv::Mat & image, cv::Mat & resultImage, const cv::Point & position, const int diameter = 6);
+        bool localZoomIn(const cv::Mat & image, cv::Mat & resultImage, const cv::Point & position, const int diameter = 6);
         /**
         * cascade two images
         * @para Mat srcImage1
@@ -121,7 +124,7 @@ public:
         * @para Mat dstImage
         * @para double alpha
         */
-        bool ImageShowEffects::cascade(const cv::Mat & srcImage1, const cv::Mat & srcImage2, cv::Mat & dstImage, const double alpha=0.5);
+        bool cascade(const cv::Mat & srcImage1, const cv::Mat & srcImage2, cv::Mat & dstImage, const double alpha=0.5);
         /**
         * transition two images
         * @para Mat srcImage
@@ -129,7 +132,7 @@ public:
         * @para vector< Mat > resultImageVec
         * @para int fnumber
         */
-        bool ImageShowEffects::transition(const cv::Mat & srcImage, const cv::Mat & dstImage, std::vector< cv::Mat>  & resultImageVec, const unsigned int number = 30);
+        bool transition(const cv::Mat & srcImage, const cv::Mat & dstImage, std::vector< cv::Mat>  & resultImageVec, const unsigned int number = 30);
         /**
         * rectangular transition two images
         * @para Mat srcImage
@@ -138,7 +141,7 @@ public:
         * @para vector< Mat > resultImageVec
         * @para int number
         */
-        bool ImageShowEffects::rectTransfer(const cv::Mat & srcImage, const cv::Mat & dstImage, std::vector< cv::Mat>  & resultImageVec, const int transferType = RECT_TRANSFER_CENTER_TO_BOEDER, const unsigned int number = 30);
+        bool rectTransfer(const cv::Mat & srcImage, const cv::Mat & dstImage, std::vector< cv::Mat>  & resultImageVec, const int transferType = RECT_TRANSFER_CENTER_TO_BOEDER, const unsigned int number = 30);
         /**
         * load image effect
         * @para Mat srcImage
@@ -147,13 +150,13 @@ public:
         * @para int blockHeight
         * @para int blockWidth
         */
-        bool ImageShowEffects::mosaicLoad(const cv::Mat & srcImage, std::vector< cv::Mat > & resultImageVec, const int type = MOSAIC_LOAD_TOP_TO_BOTTOM, const int blockHeight = 40, const int blockWidth = 40);
+        bool mosaicLoad(const cv::Mat & srcImage, std::vector< cv::Mat > & resultImageVec, const int type = MOSAIC_LOAD_TOP_TO_BOTTOM, const int blockHeight = 40, const int blockWidth = 40);
         /**
         * calculate image gradient
         * @para Mat srcImage
         * @para Mat gradient
         */
-        static bool ImageShowEffects::gradient(const cv::Mat &srcImage, cv::Mat &gradient);
+        static bool gradient(const cv::Mat &srcImage, cv::Mat &gradient);
         /**
         * SLIC super pixel
         * @para Mat srcImage
@@ -162,7 +165,16 @@ public:
         * @para int iteration count
         * @para int spatial distance weight
         */
-        static bool ImageShowEffects::SLIC(const cv::Mat & srcImage, cv::Mat &image_pixels_label, const int & k, const int & iteration_count = 20, const int & spatial_distance_weight = 4);
+        static bool SLIC(const cv::Mat & srcImage, cv::Mat &image_pixels_label, const int & k, const int & iteration_count = 20, const int & spatial_distance_weight = 4);
+        /**
+        * SLIC super pixel
+        * @para Mat srcImage
+        * @para Mat image_pixels_label, type is CV_32SC1
+        * @para int k
+        * @para int iteration count
+        */
+        static bool ASLIC(const cv::Mat & srcImage, cv::Mat &image_pixels_label, const int & k, const int & iteration_count = 20);
+
 private:
 
 
